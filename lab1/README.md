@@ -1,6 +1,10 @@
 # Lab2 solutions
 
 ```
+AI usage:
+  - Zero LLM assistance except some Google AI Overview
+    on Google Search.
+
 The directory contains directories for each problem 
 named in format `p<problem_number>`.
 
