@@ -1,4 +1,4 @@
-# Lab2 solutions
+# Lab3 solutions
 
 ```
 NOTE: This is a continuation of exercises from previous
