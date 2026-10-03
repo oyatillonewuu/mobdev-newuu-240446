@@ -6,13 +6,17 @@ Stream<int> yieldValuesDelayed(List<int> values, Duration delay) async* {
   throw "Dummy error";
 }
 
+void handleError(dynamic e) {
+  print("Stream error handler: received error `$e`");
+}
+
 void consumeStream(Stream<int> numStream) {
   numStream.listen(
     (value) {
       print(value);
     },
     onDone: () => print("Consumption done."),
-    onError: (error) => print("Stream error: $error"),
+    onError: (e) => handleError(e),
     cancelOnError: false,
   );
 }
