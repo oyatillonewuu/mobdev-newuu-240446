@@ -145,18 +145,18 @@ import 'package:flutter/material.dart';
 //   );
 // }
 
-// Task 3
-import './cat4/task3.dart' show HomeScreen, ProfileScreen, AppRoutes;
-
-void main() {
-  runApp(
-    MaterialApp(
-      initialRoute: AppRoutes.home,
-      routes: {
-        AppRoutes.home: (context) => const HomeScreen(),
-        AppRoutes.profile: (context) => const ProfileScreen(),
-      },
-      debugShowCheckedModeBanner: false,
-    ),
-  );
-}
+// // Task 3
+// import './cat4/task3.dart' show HomeScreen, ProfileScreen, AppRoutes;
+//
+// void main() {
+//   runApp(
+//     MaterialApp(
+//       initialRoute: AppRoutes.home,
+//       routes: {
+//         AppRoutes.home: (context) => const HomeScreen(),
+//         AppRoutes.profile: (context) => const ProfileScreen(),
+//       },
+//       debugShowCheckedModeBanner: false,
+//     ),
+//   );
+// }
