@@ -38,7 +38,7 @@ import 'package:flutter/material.dart';
 //   );
 // }
 
-//***************Category 1
+//***************Category 2
 
 // // Task 2
 // import './cat2/task2.dart'
@@ -110,3 +110,53 @@ import 'package:flutter/material.dart';
 //     ),
 //   );
 // }
+
+//***************Category 3
+
+// // Task 2
+// import './cat3/task2.dart' show HomeScreen;
+//
+// void main() {
+//   runApp(MaterialApp(home: HomeScreen(), debugShowCheckedModeBanner: false));
+// }
+
+// // Task 3
+// import './cat3/task3.dart' show HomeScreen;
+//
+// void main() {
+//   runApp(MaterialApp(home: HomeScreen(), debugShowCheckedModeBanner: false));
+// }
+
+//***************Category 4
+
+// // Task 2
+// import './cat4/task2.dart' show HomeScreen, SquareScreen, AppRoutes;
+//
+// void main() {
+//   runApp(
+//     MaterialApp(
+//       initialRoute: AppRoutes.home,
+//       routes: {
+//         AppRoutes.home: (context) => const HomeScreen(),
+//         AppRoutes.square: (context) => const SquareScreen(),
+//       },
+//       debugShowCheckedModeBanner: false,
+//     ),
+//   );
+// }
+
+// Task 3
+import './cat4/task3.dart' show HomeScreen, ProfileScreen, AppRoutes;
+
+void main() {
+  runApp(
+    MaterialApp(
+      initialRoute: AppRoutes.home,
+      routes: {
+        AppRoutes.home: (context) => const HomeScreen(),
+        AppRoutes.profile: (context) => const ProfileScreen(),
+      },
+      debugShowCheckedModeBanner: false,
+    ),
+  );
+}
