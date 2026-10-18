@@ -127,6 +127,13 @@ import 'package:flutter/material.dart';
 //   runApp(MaterialApp(home: HomeScreen(), debugShowCheckedModeBanner: false));
 // }
 
+// // Task 4
+// import './cat3/task4.dart' show HomeScreen;
+//
+// void main() {
+//   runApp(MaterialApp(home: HomeScreen(), debugShowCheckedModeBanner: false));
+// }
+
 //***************Category 4
 
 // // Task 2
@@ -158,5 +165,70 @@ import 'package:flutter/material.dart';
 //       },
 //       debugShowCheckedModeBanner: false,
 //     ),
+//   );
+// }
+
+// // Task 4
+// import './cat4/task4.dart' show AppRoutes, AppRouter;
+//
+// void main() {
+//   runApp(
+//     MaterialApp(
+//       initialRoute: AppRoutes.home,
+//       onGenerateRoute: AppRouter.generateRoute,
+//       debugShowCheckedModeBanner: false,
+//     ),
+//   );
+// }
+
+//***************Category 5
+
+// // Task 2
+// import './cat5/task2.dart' show HomeScreen;
+//
+// void main() {
+//   runApp(MaterialApp(home: HomeScreen(), debugShowCheckedModeBanner: false));
+// }
+
+// // Task 3
+// import './cat5/task3.dart' show HomeScreen;
+//
+// void main() {
+//   runApp(MaterialApp(home: HomeScreen(), debugShowCheckedModeBanner: false));
+// }
+
+// // Task 4
+// import './cat5/task4.dart' show HomeScreen;
+//
+// void main() {
+//   runApp(MaterialApp(home: HomeScreen(), debugShowCheckedModeBanner: false));
+// }
+
+//***************Category 6
+
+// // Task 2
+// import './cat6/task2.dart' show router;
+//
+// void main() {
+//   runApp(
+//     MaterialApp.router(routerConfig: router, debugShowCheckedModeBanner: false),
+//   );
+// }
+
+// // Task 3
+// import './cat6/task3.dart' show router;
+//
+// void main() {
+//   runApp(
+//     MaterialApp.router(routerConfig: router, debugShowCheckedModeBanner: false),
+//   );
+// }
+
+// // Task 4
+// import './cat6/task4.dart' show router;
+//
+// void main() {
+//   runApp(
+//     MaterialApp.router(routerConfig: router, debugShowCheckedModeBanner: false),
 //   );
 // }
