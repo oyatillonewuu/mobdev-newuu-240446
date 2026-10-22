@@ -7,9 +7,8 @@ import 'services/tick_feed.dart';
 
 void main() => runApp(
   ProviderScope(
-    overrides: [
-      tickFeedProvider.overrideWithValue(TickFeed(symbols: const [])),
-    ],
+    retry: ((retryCount, error) => null),
+    overrides: [tickFeedProvider.overrideWithValue(TickFeed(failAfter: 5))],
     child: TickerApp(),
   ),
 );
