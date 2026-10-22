@@ -1,0 +1,14 @@
+1. The feed is behind its provider and encapsulated with yet
+   another provider because of fundamentally different
+   functions the two server:
+    1. First provider provides us with TickFeed object and
+       updates on its state.
+    2. Second provider gives us StreamProvider which grabs data
+       from internal function of the TickFeed object.
+
+    So, first one gives us the object and its state, and the
+    second one gives the stream of values produced by that
+    object (TickFeed).
+2. Disposes the AsyncValue stream on List<Tick> of TickFeed provider.
+3. AsyncLoading because the value hasn't been loaded yet and `hasValue`
+   is false.
