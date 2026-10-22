@@ -9,3 +9,7 @@ Result:
          pattern or cases that match 'AsyncLoading<List<Tick>>()' • lib/ticker_page.dart:14:13 • non_exhaustive_switch_expression
 
     1 issue found. (ran in 3.4s)
+
+Question to answer:
+    - The more generic pattern needs to be put lower in switch expression because switch expression stop on first match.
+      So, generic matches always. Thus, for specifics to work, the have to be put first.
