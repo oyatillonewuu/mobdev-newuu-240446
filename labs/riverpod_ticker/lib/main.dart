@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'ticker_page.dart';
@@ -13,6 +14,9 @@ class TickerApp extends StatelessWidget {
     title: 'Ticker',
     theme: ThemeData(colorSchemeSeed: Colors.teal, useMaterial3: true),
     home: const TickerPage(),
+    scrollBehavior: const MaterialScrollBehavior().copyWith(
+      dragDevices: PointerDeviceKind.values.toSet(),
+    ),
     debugShowCheckedModeBanner: false,
   );
 }
