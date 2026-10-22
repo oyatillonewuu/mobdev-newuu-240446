@@ -26,16 +26,75 @@ class TickerPage extends ConsumerWidget {
         ],
       ),
       body: switch (ticks) {
-        AsyncData(value: []) => const Center(
-          child: Text('No symbols subscribed'),
-        ),
-        AsyncData(value: [final only]) => Center(child: TickRow(only)),
-        AsyncData(:final value) => ListView(
+        // Error with stale data: show rows dimmed, banner on top
+        AsyncError(:final error, :final value?) => Column(
           children: [
-            for (final t in value) TickRow(t, key: ValueKey(t.symbol)),
+            MaterialBanner(
+              content: Text('Feed error: $error — showing last prices'),
+              actions: [
+                TextButton(
+                  onPressed: () => ref.invalidate(tickerProvider),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => ref.refresh(tickerProvider.future),
+                child: Opacity(
+                  opacity: 0.5,
+                  child: ListView(
+                    children: [
+                      for (final t in value)
+                        TickRow(t, key: ValueKey(t.symbol)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
-        AsyncError(:final error) => Center(child: Text('Error: $error')),
+        // Error with nothing to show
+        AsyncError(:final error) => Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Could not load ticker\n$error',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              FilledButton(
+                onPressed: () => ref.invalidate(tickerProvider),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+        // Refresh in progress, keep rows, show thin progress bar
+        AsyncValue(:final value?, isLoading: true) => Column(
+          children: [
+            const LinearProgressIndicator(),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => ref.refresh(tickerProvider.future),
+                child: ListView(
+                  children: [
+                    for (final t in value) TickRow(t, key: ValueKey(t.symbol)),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        AsyncData(:final value) => RefreshIndicator(
+          onRefresh: () => ref.refresh(tickerProvider.future),
+          child: ListView(
+            children: [
+              for (final t in value) TickRow(t, key: ValueKey(t.symbol)),
+            ],
+          ),
+        ),
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
       },
     );
