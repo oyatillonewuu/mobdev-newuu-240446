@@ -1,0 +1,11 @@
+3.3. Comment out the AsyncLoading() arm and run flutter analyze . Record the exact diagnostic in your notes — this is the compile-
+time guarantee you are relying on.
+
+Result:
+    ❯ flutter analyze
+    Analyzing riverpod_ticker...
+
+    error • The type 'AsyncValue<List<Tick>>' isn't exhaustively matched by the switch cases since it doesn't match the pattern 'AsyncLoading<List<Tick>>()'. Try adding a wildcard
+         pattern or cases that match 'AsyncLoading<List<Tick>>()' • lib/ticker_page.dart:14:13 • non_exhaustive_switch_expression
+
+    1 issue found. (ran in 3.4s)

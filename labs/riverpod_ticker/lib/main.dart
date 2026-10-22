@@ -2,8 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'ticker_page.dart';
+import 'providers/ticker_providers.dart';
+import 'services/tick_feed.dart';
 
-void main() => runApp(const ProviderScope(child: TickerApp()));
+void main() => runApp(
+  ProviderScope(
+    overrides: [
+      tickFeedProvider.overrideWithValue(TickFeed(symbols: const [])),
+    ],
+    child: TickerApp(),
+  ),
+);
 
 class TickerApp extends StatelessWidget {
   const TickerApp({super.key});
