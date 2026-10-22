@@ -10,7 +10,21 @@ class TickerPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ticks = ref.watch(tickerProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Live ticker')),
+      appBar: AppBar(
+        title: const Text('Live ticker'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.error),
+            onPressed: () =>
+                ref.read(failAfterProvider.notifier).update((state) {
+                  return switch (state) {
+                    null => 5,
+                    _ => null,
+                  };
+                }),
+          ),
+        ],
+      ),
       body: switch (ticks) {
         AsyncData(value: []) => const Center(
           child: Text('No symbols subscribed'),

@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'ticker_page.dart';
 
-void main() => runApp(ProviderScope(child: TickerApp()));
+void main() =>
+    runApp(ProviderScope(retry: (retryCount, _) => null, child: TickerApp()));
 
 class TickerApp extends StatelessWidget {
   const TickerApp({super.key});
@@ -12,5 +13,6 @@ class TickerApp extends StatelessWidget {
     title: 'Ticker',
     theme: ThemeData(colorSchemeSeed: Colors.teal, useMaterial3: true),
     home: const TickerPage(),
+    debugShowCheckedModeBanner: false,
   );
 }
