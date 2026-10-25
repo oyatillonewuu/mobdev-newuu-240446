@@ -1,0 +1,52 @@
+4.3.
+    The difference between the two is that
+    invalidate makes the object dirty and thus
+    is lazy recomputation while refresh forces
+    recomputation eagerly.
+
+    Under the hood, refresh first calls invalidate
+    and then read (that's why it returns future because
+    value can be returned later and a future allows non-
+    blocking execution).
+
+    Also refresh keeps the refresh spinner on until
+    the data arrives while invalidate dismisses it.
+
+    In other words, invalidate just makes dirty and
+    other 'read' somewhere triggers actual recomputation
+    (lazy recomputation).
+
+    Both of them keep the previous rows visible
+    as:
+        - Data are replaced on refresh when they arrive.
+        - Data are replace after invalidate when the next
+          read is made and new values arrive.
+
+4.4.
+    I have re-ordered arms to prevent full screen loading
+    indicator to show if data were ever shown.
+
+    The async value arm at the top catches:
+        - refresh
+        - reload
+
+        with previous values (values are always there
+        if they had been shown earlier and their provider
+        is alive).
+
+    The rest catch an error with values, an error without
+    values but with loading state, and for valueless error with
+    no loading state.
+
+    Also, there are arms for continuous healthy stream of data
+    and full-screen loading for first cold start and on retry
+    on valueless error (reproduce: override initial
+    failAfter with value 0).
+
+    Difference between isRefreshing and isReloading:
+        - isRefreshing when recompute is explicitly requested
+          (refresh, invalidate, pull-to-refresh, etc.).
+        - isReloading when the watched dependency changes
+          and forces recompute.
+
+        So, the difference is the "when".
