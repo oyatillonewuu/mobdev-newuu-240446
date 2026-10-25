@@ -20,7 +20,7 @@ class TickFeed {
   Stream<List<Tick>> watch() async* {
     var count = 0;
     await Future<void>.delayed(
-      const Duration(milliseconds: 800),
+      const Duration(milliseconds: 3000),
     ); // visible first load
     while (true) {
       if (failAfter != null && count >= failAfter!) {

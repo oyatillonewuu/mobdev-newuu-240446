@@ -9,6 +9,7 @@ class TickerPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ticks = ref.watch(tickerProvider);
+    debugPrint("$ticks");
     return Scaffold(
       appBar: AppBar(
         title: const Text('Live ticker'),
@@ -26,6 +27,26 @@ class TickerPage extends ConsumerWidget {
         ],
       ),
       body: switch (ticks) {
+        // Loading with past values in progress, keep rows, show thin progress bar
+        AsyncValue(:final value?, isLoading: true) => Column(
+          children: [
+            const LinearProgressIndicator(),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: () => ref.refresh(tickerProvider.future),
+                child: Opacity(
+                  opacity: 0.5,
+                  child: ListView(
+                    children: [
+                      for (final t in value)
+                        TickRow(t, key: ValueKey(t.symbol)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
         // Error with stale data: show rows dimmed, banner on top
         AsyncError(:final error, :final value?) => Column(
           children: [
@@ -33,7 +54,7 @@ class TickerPage extends ConsumerWidget {
               content: Text('Feed error: $error — showing last prices'),
               actions: [
                 TextButton(
-                  onPressed: () => ref.invalidate(tickerProvider),
+                  onPressed: () => ref.refresh(tickerProvider.future),
                   child: const Text('Retry'),
                 ),
               ],
@@ -54,6 +75,10 @@ class TickerPage extends ConsumerWidget {
             ),
           ],
         ),
+        // Error with loading in progress but with no past values
+        AsyncError(isLoading: true) => const Center(
+          child: CircularProgressIndicator(),
+        ),
         // Error with nothing to show
         AsyncError(:final error) => Center(
           child: Column(
@@ -65,28 +90,13 @@ class TickerPage extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
               FilledButton(
-                onPressed: () => ref.invalidate(tickerProvider),
+                onPressed: () => ref.refresh(tickerProvider.future),
                 child: const Text('Retry'),
               ),
             ],
           ),
         ),
-        // Refresh in progress, keep rows, show thin progress bar
-        AsyncValue(:final value?, isLoading: true) => Column(
-          children: [
-            const LinearProgressIndicator(),
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () => ref.refresh(tickerProvider.future),
-                child: ListView(
-                  children: [
-                    for (final t in value) TickRow(t, key: ValueKey(t.symbol)),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+        // Data from healthy and stable stream
         AsyncData(:final value) => RefreshIndicator(
           onRefresh: () => ref.refresh(tickerProvider.future),
           child: ListView(
@@ -95,6 +105,7 @@ class TickerPage extends ConsumerWidget {
             ],
           ),
         ),
+        // Cold start load
         AsyncLoading() => const Center(child: CircularProgressIndicator()),
       },
     );
