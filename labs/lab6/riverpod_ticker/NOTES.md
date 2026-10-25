@@ -1,26 +1,31 @@
 1. Which three subtypes make AsyncValue sealed, and what does the analyzer report when a switch expression misses one?
 
-    AsyncData, AsyncLoading, AsyncError.
+```
+    [AsyncData], [AsyncLoading], [AsyncError].
 
     Analyzer reports that switch expression is non-exhaustive
     if any is missing.
+```
 
 2. When does AsyncError.value carry a non-null value, and when is it null?
 
-    value is not null when the provider that has been alive
+```
+    value is not [null] when the provider that has been alive
     until this point as is still alive and provided some
     value earlier as that value is preserved by riverpod
     for passing to next AsyncValue.
+```
 
 3. What is the difference between ref.refresh(provider) , ref.refresh(provider.future) and ref.invalidate(provider) ?
 
+```
     The difference between the two is that
     invalidate makes the object dirty and thus
     is lazy recomputation while refresh forces
     recomputation eagerly.
 
-    Under the hood, refresh first calls invalidate
-    and then read (that's why it returns future because
+    Under the hood, [refresh] first calls [invalidate]
+    and then [read] (that's why it returns future because
     value can be returned later and a future allows non-
     blocking execution).
 
@@ -36,24 +41,28 @@
         - Data are replaced on refresh when they arrive.
         - Data are replace after invalidate when the next
           read is made and new values arrive.
+```
 
 4. Why does AsyncValue(:final value?, isLoading: true) need to sit above AsyncData(:final value) ?
 
-
+```
     Rule for arms order: from most specific, to most generic.
 
     Because the given AsyncValue is more specfic thatn AsyncData
     with value, it needs to stay above.
 
-    What if value is null? In this case, AsyncValue will not match.
-    The order matters only when value is not null (in that case,
-    AsyncValue indeed becomes more specific and putting it
+    What if [value] is [null]? In this case, [AsyncValue] will not match.
+    The order matters only when value is not [null] (in that case,
+    [AsyncValue] indeed becomes more specific and putting it
     below would result in miss of more specific handling).
+```
 
 5. Give one reason to prefer switch expressions over .when(...) for AsyncValue , and one situation where .when is still convenient.
 
+```
     switch expression gives compile time guarantee that all
     cases have been covered.
 
-    .when could be more convenient when we care about one
+    `.when` could be more convenient when we care about one
     specific case.
+```
