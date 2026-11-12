@@ -35,6 +35,22 @@ extension CartLines on List<CartLine> {
     for (final l in this)
       if (l.product.id != productId) l,
   ];
+
+  List<CartLine> changeQty(String productId, int delta) {
+    final i = indexWhere((l) => l.product.id == productId);
+    if (i == -1) return this;
+    final CartLine cartLine = this[i];
+    if (cartLine.qty + delta <= 0) {
+      return without(cartLine.product.id);
+    }
+    return [
+      for (final l in this)
+        l.product.id == cartLine.product.id
+            ? l.copyWith(qty: l.qty + delta)
+            : l,
+    ];
+  }
+
   double get subtotal => fold(0, (s, l) => s + l.subtotal);
   int get itemCount => fold(0, (s, l) => s + l.qty);
 }
