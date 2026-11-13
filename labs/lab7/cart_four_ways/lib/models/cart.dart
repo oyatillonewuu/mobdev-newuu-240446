@@ -1,3 +1,5 @@
+enum CheckoutStatus { idle, submitted, success, failure }
+
 class Product {
   const Product({required this.id, required this.name, required this.price});
   final String id;
@@ -53,4 +55,58 @@ extension CartLines on List<CartLine> {
 
   double get subtotal => fold(0, (s, l) => s + l.subtotal);
   int get itemCount => fold(0, (s, l) => s + l.qty);
+}
+
+class CartState {
+  final List<CartLine> lines;
+  final String? coupon;
+  final String? couponError;
+  final String? orderId;
+  final String? checkoutError;
+  final CheckoutStatus checkoutStatus;
+
+  CartState({
+    required this.lines,
+    this.coupon,
+    this.orderId,
+    this.checkoutError,
+    CheckoutStatus? checkoutStatus,
+  }) : couponError = (coupon != null && coupon != "SAVE10")
+           ? "Invalid coupon"
+           : null,
+       checkoutStatus = (checkoutStatus ?? CheckoutStatus.idle);
+
+  CartState copyWith({
+    List<CartLine>? lines,
+    String? coupon,
+    String? orderId,
+    String? checkoutError,
+    CheckoutStatus? checkoutStatus,
+  }) {
+    return CartState(
+      lines: lines ?? this.lines,
+      coupon: coupon ?? this.coupon,
+      orderId: orderId ?? this.orderId,
+      checkoutError:
+          checkoutError ?? ((orderId != null) ? null : this.checkoutError), // if orderId is not null,we should not carry prev error
+      checkoutStatus: checkoutStatus ?? this.checkoutStatus,
+    );
+  }
+
+  int get itemCount {
+    return lines.itemCount;
+  }
+
+  double get subtotal => lines.subtotal;
+
+  double get discount {
+    if (couponError == null) {
+      return 10.0;
+    }
+    return 0;
+  }
+
+  double get total {
+    return subtotal - (discount / 100) * subtotal;
+  }
 }
