@@ -1,0 +1,3 @@
+- seprated summary card
+- moved snackbar/material banner logic and checkout status changes away from UI
+- checkout success should clear the history

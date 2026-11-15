@@ -1,3 +1,4 @@
+import 'package:cart_four_ways/services/checkout_api.dart';
 import 'package:flutter/material.dart';
 
 import '../models/cart.dart';
@@ -11,7 +12,7 @@ class SetStateCartPage extends StatefulWidget {
 
 class _SetStateCartPageState extends State<SetStateCartPage> {
   CartState _cartState = CartState(lines: []);
-  final List<CartState> _history = [];
+  List<CartState> _history = [];
 
   void _saveCurrentStateToHistory() {
     if (_cartState.checkoutStatus == CheckoutStatus.idle) {
@@ -46,7 +47,10 @@ class _SetStateCartPageState extends State<SetStateCartPage> {
     );
   }
 
-  void _onClearCart() => setState(() => CartState(lines: []));
+  void _onClearCartIncludingHistory() => setState(() {
+    _history = <CartState>[];
+    _cartState = CartState(lines: []);
+  });
 
   void _onChangeQty(String productId, int delta) {
     _saveCurrentStateToHistory();
@@ -67,6 +71,42 @@ class _SetStateCartPageState extends State<SetStateCartPage> {
       checkoutStatus: CheckoutStatus.submitted,
     ),
   );
+
+  Future<void> _onCheckout() async {
+    final messenger = ScaffoldMessenger.of(context);
+    _onCheckoutSubmitted();
+    try {
+      final result = await CheckoutApi().submit(_cartState.total);
+      if (!mounted) return;
+      _onCheckoutFinished(result, null, CheckoutStatus.success);
+
+      if (!mounted) return;
+      final snackbarResult = messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            "Order '${_cartState.orderId}' sucessfully checked out.",
+          ),
+        ),
+      );
+      if (!mounted) return;
+      snackbarResult.closed.then((_) => _onClearCartIncludingHistory());
+    } on CheckoutException catch (e) {
+      if (!mounted) return;
+      _onCheckoutFinished(null, e.toString(), CheckoutStatus.failure);
+      if (!mounted) return;
+      messenger.showMaterialBanner(
+        MaterialBanner(
+          content: Text("Failed to checkout. Error: ${e.toString()}"),
+          actions: [
+            TextButton(
+              onPressed: () => messenger.hideCurrentMaterialBanner(),
+              child: Text('Dismiss'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   void _onCheckoutFinished(
     String? orderId,
@@ -101,9 +141,7 @@ class _SetStateCartPageState extends State<SetStateCartPage> {
       onChangeQty: _onChangeQty,
       onRemove: _remove,
       onApplyCoupon: _onCouponApplied,
-      onCheckoutSubmitted: _onCheckoutSubmitted,
-      onCheckoutFinished: _onCheckoutFinished,
-      onClearCart: _onClearCart,
+      onCheckout: _onCheckout,
     ),
   );
   // 2.

@@ -1,39 +1,30 @@
-import 'package:cart_four_ways/services/checkout_api.dart';
 import 'package:flutter/material.dart';
 
 import '../models/cart.dart';
 
 class CartBody extends StatelessWidget {
-  CartBody({
+  const CartBody({
     super.key,
     required this.cartState,
     required this.onAdd,
     required this.onChangeQty,
     required this.onRemove,
     required this.onApplyCoupon,
-    required this.onCheckoutSubmitted,
-    required this.onCheckoutFinished,
-    required this.onClearCart,
+    required this.onCheckout,
+    this.includeSummaryCard = true,
   });
 
   final CartState cartState;
+  final bool includeSummaryCard;
   final void Function(Product) onAdd;
   final void Function(String, int) onChangeQty;
   final void Function(String productId) onRemove;
   final void Function(String coupon) onApplyCoupon;
-  final void Function() onCheckoutSubmitted;
-  final void Function(
-    String? orderId,
-    String? checkoutError,
-    CheckoutStatus checkoutStatus,
-  )
-  onCheckoutFinished;
-  final void Function() onClearCart;
-
-  final TextEditingController _controller = TextEditingController();
+  final Future<void> Function() onCheckout;
 
   @override
   Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
     children: [
       Padding(
         padding: const EdgeInsets.all(12),
@@ -71,77 +62,27 @@ class CartBody extends StatelessWidget {
                 ],
               ),
       ),
-      CouponInputHandlerWidget(onApplyCoupon: onApplyCoupon),
-      ListTile(
-        title: const Text('Item count'),
-        trailing: Text(
-          cartState.itemCount.toString(),
-          style: TextStyle(fontSize: 16.0),
+      CouponInputHandlerWidget(
+        onApplyCoupon: onApplyCoupon,
+        coupon: cartState.coupon,
+        couponError: cartState.couponError,
+      ),
+
+      if (includeSummaryCard)
+        SummaryCard(
+          itemCount: cartState.itemCount,
+          discount: cartState.discount,
+          subtotal: cartState.subtotal,
+          total: cartState.total,
         ),
-      ),
-      ListTile(
-        title: const Text('Applied coupon'),
-        trailing: Text(cartState.coupon ?? "(N/A)"),
-      ),
-      if (cartState.couponError != null)
-        Text(
-          "Coupon error: ${cartState.couponError}",
-          style: TextStyle(color: Colors.red),
-        ),
-      ListTile(
-        title: const Text('Subtotal'),
-        trailing: Text(cartState.subtotal.toStringAsFixed(2)),
-      ),
-      ListTile(
-        title: const Text('Discount'),
-        trailing: Text(cartState.discount.toStringAsFixed(2)),
-      ),
-      ListTile(
-        title: const Text('Total'),
-        trailing: Text(cartState.total.toStringAsFixed(2)),
-      ),
+
       ElevatedButton(
         onPressed:
             (cartState.total == 0 ||
                 cartState.checkoutStatus == CheckoutStatus.submitted)
             ? null
             : () async {
-                onCheckoutSubmitted();
-                try {
-                  final result = await CheckoutApi.submit(cartState.total);
-                  if (!context.mounted) return;
-                  onCheckoutFinished(result, null, CheckoutStatus.success);
-                  final snackbarResult = ScaffoldMessenger.of(context)
-                      .showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            "Order '$result' sucessfully checked out.",
-                          ),
-                        ),
-                      );
-                  snackbarResult.closed.then((_) => onClearCart());
-                } on CheckoutException catch (e) {
-                  onCheckoutFinished(
-                    null,
-                    e.toString(),
-                    CheckoutStatus.failure,
-                  );
-                  ScaffoldMessenger.of(context).showMaterialBanner(
-                    MaterialBanner(
-                      content: Text(
-                        "Failed to checkout. Error: ${e.toString()}",
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () =>
-                              ScaffoldMessenger.of(context)
-                                  .hideCurrentMaterialBanner(),
-                          child: Text('Dismiss'),
-                        ),
-                      ],
-                    ),
-                  );
-                }
+                await onCheckout();
               },
         child: const Text("Checkout"),
       ),
@@ -169,25 +110,92 @@ class ProductWidget extends StatelessWidget {
   }
 }
 
+class SummaryCard extends StatelessWidget {
+  const SummaryCard({
+    super.key,
+    required this.itemCount,
+    required this.discount,
+    required this.subtotal,
+    required this.total,
+  });
+
+  final int itemCount;
+  final double discount;
+  final double subtotal;
+  final double total;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          title: const Text('Item count'),
+          trailing: Text(
+            itemCount.toString(),
+            style: TextStyle(fontSize: 16.0),
+          ),
+        ),
+        ListTile(
+          title: const Text('Subtotal'),
+          trailing: Text(subtotal.toStringAsFixed(2)),
+        ),
+        ListTile(
+          title: const Text('Discount'),
+          trailing: Text(discount.toStringAsFixed(2)),
+        ),
+        ListTile(
+          title: const Text('Total'),
+          trailing: Text(total.toStringAsFixed(2)),
+        ),
+      ],
+    );
+  }
+}
+
 // Granular dedicated classes make it esier to pump widgets for testing.
 class CouponInputHandlerWidget extends StatelessWidget {
-  CouponInputHandlerWidget({super.key, required this.onApplyCoupon});
+  CouponInputHandlerWidget({
+    super.key,
+    required this.onApplyCoupon,
+    this.coupon,
+    this.couponError,
+  });
 
+  final String? coupon;
+  final String? couponError;
   final void Function(String coupon) onApplyCoupon;
 
   final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       mainAxisSize: MainAxisSize.min,
-      spacing: 20,
       children: [
-        SizedBox(width: 200, child: CouponInputWidget(controller: _controller)),
-        CouponApplyButton(
-          controller: _controller,
-          onApplyCoupon: onApplyCoupon,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 20,
+          children: [
+            SizedBox(
+              width: 200,
+              child: CouponInputWidget(controller: _controller),
+            ),
+            CouponApplyButton(
+              controller: _controller,
+              onApplyCoupon: onApplyCoupon,
+            ),
+          ],
         ),
+        ListTile(
+          title: const Text('Applied coupon'),
+          trailing: Text(coupon ?? "(N/A)"),
+        ),
+        if (couponError != null)
+          Text(
+            "Coupon error: $couponError",
+            style: TextStyle(color: Colors.red),
+          ),
       ],
     );
   }
