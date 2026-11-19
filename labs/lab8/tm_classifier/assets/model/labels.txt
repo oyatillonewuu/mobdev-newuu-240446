@@ -1,0 +1,6 @@
+0 Watch
+1 Nothing
+2 Calculator
+3 Ruler
+4 Flash disk
+5 Watch charger
