@@ -26,12 +26,12 @@
 # Q/A
 
 ```
-Task 1
+Part 1
   1. What does the model answer when it sees an object that
      belongs to none of your classes? How does the background
      class change that?
 
-     In my case, it wrongly flagged even me as "Flash disk" instead
+      In my case, it wrongly flagged me as "Flash disk" instead
      of "nothing" class. I think this is because I didn't
      include my image in the training samples for "nothing" class.
      If thre weren't this class, the model could have shown
@@ -43,24 +43,24 @@ Task 1
      What differs between the two files in size, in input type
      and in what your Dart code would have to do?
 
-     Floating point exports a model with weights expressed in
+      Floating point exports a model with weights expressed in
      floating point. Quantized does a compression that
      makes weights expressed in integers thus saving space.
 
-     In quantized version, Dart code would have had "decompress"
+      In quantized version, Dart code would have had "decompress"
      the weights into usable values.
 
-Task 2
+Part 2
   1. What is the difference between listing assets/model/ and 
      listing assets/ ? Which files would each one bundle?
 
-     Flutter docs^[1] says that only files directly located
+      Flutter docs^[1] says that only files directly located
      in a given directory are loaded.
 
-     So, assets/ option would miss bundling the model files
+      So, assets/ option would miss bundling the model files
      because they're locating in the `model` subdirectory.
 
-     The option assets/model/ includes the model files
+      The option assets/model/ includes the model files
      because they're located directly in this directory.
 
      [1] - https://docs.flutter.dev/ui/assets/assets-and-images#specifying-assets
@@ -68,11 +68,29 @@ Task 2
   2. Why can image and http run in a plain Dart unit test while 
      tflite_flutter and image_picker cannot?
 
-     For tflite_flutter, it may not be able to be unit-tested
+      For tflite_flutter, it may not be able to be unit-tested
      in plain Dart because it inherently uses FFI (Foreign
      Function Interface) for C for Tensorflow.
 
-     For image_pciker, plain usage in testing would fail
+      For image_pciker, plain usage in testing would fail
      because image_picker use native OS features which
      won't be available in testing.
+
+Part 3
+
+   1. Change the normalisation to value / 255 and classify
+      the sample again. What happens to the percentages, 
+      and why does nothing crash?
+
+      (.....)
+
+   2. Where in the whole app is the number of classes written
+      down? What would you have to edit after retraining 
+      with a seventh class?
+
+       It is in assets/model/labels.txt, not in the code. The application reads
+      this file to load labels.
+
+       If we ever retrain the model to use different classes, we both update
+      the model file and labels.txt.
 ```
