@@ -1,3 +1,6 @@
+
+# Model info
+
 ```
 
     Class list
@@ -13,9 +16,17 @@
 
 [Preview example screenshot](./docs/preview.png)
 
+# Notes
+
+```
+   1. Riverpod is used for sharing classifier.
+
+```
+
 # Q/A
 
 ```
+Task 1
   1. What does the model answer when it sees an object that
      belongs to none of your classes? How does the background
      class change that?
@@ -38,4 +49,30 @@
 
      In quantized version, Dart code would have had "decompress"
      the weights into usable values.
+
+Task 2
+  1. What is the difference between listing assets/model/ and 
+     listing assets/ ? Which files would each one bundle?
+
+     Flutter docs^[1] says that only files directly located
+     in a given directory are loaded.
+
+     So, assets/ option would miss bundling the model files
+     because they're locating in the `model` subdirectory.
+
+     The option assets/model/ includes the model files
+     because they're located directly in this directory.
+
+     [1] - https://docs.flutter.dev/ui/assets/assets-and-images#specifying-assets
+     
+  2. Why can image and http run in a plain Dart unit test while 
+     tflite_flutter and image_picker cannot?
+
+     For tflite_flutter, it may not be able to be unit-tested
+     in plain Dart because it inherently uses FFI (Foreign
+     Function Interface) for C for Tensorflow.
+
+     For image_pciker, plain usage in testing would fail
+     because image_picker use native OS features which
+     won't be available in testing.
 ```

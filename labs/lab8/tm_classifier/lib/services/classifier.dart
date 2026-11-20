@@ -1,8 +1,16 @@
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image/image.dart' as img;
 import 'package:tflite_flutter/tflite_flutter.dart';
+
+class PredictionResult {
+  final List<Prediction> predictions;
+  final String imagePath;
+
+  PredictionResult({required this.predictions, required this.imagePath});
+}
 
 class Prediction {
   const Prediction(this.label, this.confidence);
@@ -65,3 +73,10 @@ class Classifier {
   void close() => _interpreter.close();
 }
 
+final classifierProvider = FutureProvider<Classifier>((ref) async {
+  final classifier = await Classifier.load();
+  if (ref.mounted) {
+    ref.onDispose(() => classifier.close());
+  }
+  return classifier;
+});
