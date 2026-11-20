@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tm_classifier/services/classifier.dart';
@@ -67,14 +69,19 @@ class MainAppState extends ConsumerState<MainApp> {
         mainAxisAlignment: MainAxisAlignment.center,
         spacing: 10.0,
         children: [
-          PredictionsWidget(predictionResult: _lastPrediction,),
+          PredictionsWidget(predictionResult: _lastPrediction),
           SizedBox(height: 50.0),
           ElevatedButton(
             onPressed: () async {
-              final predictions = classifier.classify(
-                (await rootBundle.load("assets/model/sample.jpeg")).buffer
+              if (!context.mounted) return;
+              final List<Prediction>? predictions = makePrediction(
+                classifier: classifier,
+                bytes: (await rootBundle.load("assets/model/sample.jpeg"))
+                    .buffer
                     .asUint8List(),
+                context: context,
               );
+              if (predictions == null) return;
               setState(() {
                 _lastPrediction = PredictionResult(
                   predictions: predictions,
@@ -84,11 +91,54 @@ class MainAppState extends ConsumerState<MainApp> {
             },
             child: const Text("Predict on sample image"),
           ),
+          ElevatedButton(
+            onPressed: () async {
+              final List<Prediction>? predictions = makePrediction(
+                classifier: classifier,
+                bytes: Uint8List.fromList([1, 2, 3, 4]),
+                context: context
+              );
+              if (predictions == null) return;
+              setState(() {
+                _lastPrediction = PredictionResult(
+                  predictions: predictions,
+                  imagePath: "assets/model/sample.jpeg",
+                );
+              });
+            },
+            child: const Text("Predict on invalid image bytes"),
+          ),
         ],
       ),
       _ => const Text("Fatal crash"),
     };
   }
+}
+
+List<Prediction>? makePrediction({
+  required Classifier classifier,
+  required Uint8List bytes,
+  required BuildContext context,
+}) {
+  try {
+    return classifier.classify(bytes);
+  } catch (e) {
+    if (!context.mounted) return null;
+    ScaffoldMessenger.of(context).showMaterialBanner(
+      MaterialBanner(
+        content: Text(e.toString()),
+        actions: [
+          TextButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+            },
+            child: const Text("Dismiss"),
+          ),
+        ],
+      ),
+    );
+  }
+  return null;
 }
 
 class PredictionsWidget extends StatelessWidget {
@@ -98,18 +148,24 @@ class PredictionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Column(
-      children: [
-        const Text("Prediction Result"),
-        SizedBox(height: 20.0),
-        if (predictionResult == null) const Text("(no predictions yet)"),
-        if (predictionResult != null)
-          Image.asset(predictionResult!.imagePath, bundle: rootBundle, width: 250.0,),
-        SizedBox(height: 20.0),
-        if (predictionResult != null)
-          for (final pred in predictionResult!.predictions)
-            Text("${pred.label}: ${pred.confidence.toStringAsFixed(2)}"),
-      ],
-    ));
+    return Center(
+      child: Column(
+        children: [
+          const Text("Prediction Result"),
+          SizedBox(height: 20.0),
+          if (predictionResult == null) const Text("(no predictions yet)"),
+          if (predictionResult != null)
+            Image.asset(
+              predictionResult!.imagePath,
+              bundle: rootBundle,
+              width: 250.0,
+            ),
+          SizedBox(height: 20.0),
+          if (predictionResult != null)
+            for (final pred in predictionResult!.predictions)
+              Text("${pred.label}: ${pred.confidence.toStringAsFixed(2)}"),
+        ],
+      ),
+    );
   }
 }
