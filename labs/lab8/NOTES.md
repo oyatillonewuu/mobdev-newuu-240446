@@ -23,6 +23,15 @@
 
 ```
 
+# Figma template (UI kit there)
+
+Link: [Material 3 Design Kit](https://www.figma.com/community/file/1035203688168086460/material-3-design-kit)
+
+Author: Google.
+
+License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+
+
 # Q/A
 
 ```
