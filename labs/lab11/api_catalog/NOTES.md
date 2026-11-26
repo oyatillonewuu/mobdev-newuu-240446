@@ -15,3 +15,20 @@
    Body:
         {"message":"Product with id '0' not found"}
 ```
+
+# Part 2
+
+```
+1. What exactly happens if you write json['price'] as double and 
+   the server sends 10 ? Is the error found at compile time or at runtime?
+
+   Causes casting error (because the value would have been converted to int
+   which is not a subtype of 'double').
+
+   Error happens at run time.
+   
+   Here's what I got when tested with code:
+   
+    print((json["id"] as double));
+      type 'int' is not a subtype of type 'double' in type cast
+```
