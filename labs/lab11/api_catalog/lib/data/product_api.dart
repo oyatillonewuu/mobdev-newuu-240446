@@ -14,7 +14,10 @@ class ApiException implements Exception {
 }
 
 class ProductApi {
-  ProductApi({http.Client? client}) : _client = client ?? http.Client();
+  ProductApi({Duration? timeout, http.Client? client})
+    : _client = client ?? http.Client(),
+      _timeout = timeout ?? Duration(seconds: 10);
+  final Duration _timeout;
   final http.Client _client;
   static const _host = 'dummyjson.com';
 
@@ -40,7 +43,7 @@ class ProductApi {
     final http.Response response;
 
     try {
-      response = await _client.get(uri).timeout(Duration(seconds: 10));
+      response = await _client.get(uri).timeout(_timeout);
     } on TimeoutException {
       throw ApiException("Server couldn't answer within timeout limit");
     }
