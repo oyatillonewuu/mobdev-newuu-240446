@@ -1,16 +1,24 @@
+import 'package:api_catalog/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-void main() async {
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class Observer extends BlocObserver {
+  @override
+  void onChange(BlocBase<dynamic> bloc, Change<dynamic> change) {
+    super.onChange(bloc, change);
+    // ignore: avoid_print
+    print(change);
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Hello World!'))),
-    );
+  void onClose(BlocBase<dynamic> bloc) {
+    super.onClose(bloc);
+    // ignore: avoid_print
+    print("${bloc.runtimeType} closed");
   }
+}
+
+void main() async {
+  Bloc.observer = Observer();
+  runApp(const MaterialApp(home: HomeScreen()));
 }

@@ -39,6 +39,7 @@ void main() {
     final Map<String, dynamic> jsonNoBrand = {
       "id": 1,
       "title": "test",
+      "description": "test",
       "price": 1,
       "rating": 2,
       "brand": null,
@@ -50,6 +51,7 @@ void main() {
     final Map<String, dynamic> jsonNoTags = {
       "id": 1,
       "title": "test",
+      "description": "test",
       "price": 1,
       "rating": 2,
       "brand": null,

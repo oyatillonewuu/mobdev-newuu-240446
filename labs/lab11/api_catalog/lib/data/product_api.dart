@@ -25,6 +25,7 @@ class ProductApi {
     final uri = Uri.https(_host, '/products', {
       'limit': '$limit',
       'skip': '$skip',
+      'delay': '3000',
     });
     return ProductPage.fromJson(await _get(uri));
   }
@@ -46,6 +47,10 @@ class ProductApi {
       response = await _client.get(uri).timeout(_timeout);
     } on TimeoutException {
       throw ApiException("Server couldn't answer within timeout limit");
+    } on http.ClientException {
+      throw ApiException(
+        "Something went wrong. Please, check your internet or try again later.",
+      );
     }
 
     if (response.statusCode != 200) {
