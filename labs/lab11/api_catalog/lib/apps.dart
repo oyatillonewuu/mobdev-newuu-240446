@@ -27,7 +27,6 @@ class SearchApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RepositoryProvider(
-      // TODO: give its own instance of API
       create: (_) => ProductApi(),
       child: BlocProvider<SearchBloc>(
         create: (context) => SearchBloc(context.read<ProductApi>()),
