@@ -10,7 +10,7 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 30.0),
+      margin: EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
       surfaceTintColor: Colors.white24,
       elevation: 5.0,
       child: Padding(

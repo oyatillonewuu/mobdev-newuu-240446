@@ -7,6 +7,8 @@ import 'package:http/http.dart';
 import 'package:http/testing.dart';
 import 'package:test/test.dart';
 
+import 'fake_client.dart';
+
 void main() {
   final String testJson = File("./test/fixtures/product.json")
       .readAsStringSync();
@@ -21,11 +23,7 @@ void main() {
   final testHeaders = {"Content-Type": "application/json"};
 
   test("it retuns one product in product page", () async {
-    final MockClient client = MockClient((request) {
-      return Future(() => Response(testBody, 200, headers: testHeaders));
-    });
-
-    final ProductApi api = ProductApi(client: client);
+    final ProductApi api = ProductApi(client: getProductsFakeClient());
 
     final ProductPage productPage = await api.getProducts(
       limit: testLimit,

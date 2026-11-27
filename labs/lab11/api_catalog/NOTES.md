@@ -72,10 +72,40 @@
 
     .... inline doc says.
 
-    This means the default comparator isn't expected to give what we expect from 
+    This means the default comparator isn't expected to give what we expect from
     comparison.
 
     For direct instance comparison to work, we should override `==` operator at least
     to use our custom logic.
-    
+
+```
+
+# Part 5
+
+```
+>  Prove the cancel. Temporarily add delay: 3000 to the search query,
+>  search for phone and immediately for laptop . Only laptop results
+>  may appear. Record what you saw.
+
+  Instead of 3000, I added delay of 5000. And, I changed the `SearchBloc`
+  to log `query` and the first product's title if any. The BlocObserver
+  prints states.
+
+  Here are the logs:
+
+    Performing hot restart...
+    Restarted application in 189ms.
+    phone
+    phone
+    Change { currentState: Instance of 'SearchIdle', nextState: Instance of 'SearchLoading' }
+    laptop
+    laptop
+    Apple AirPods Max Silver
+    Apple MacBook Pro 14 Inch Space Grey
+    Change { currentState: Instance of 'SearchLoading', nextState: Instance of 'SearchResults' }
+
+  So, it looks the bloc is anyway finishing the first query request but
+  using the result of the next query without emitting new state on submit
+  but replacing the result to fire in SearchLoaded state emission.
+
 ```

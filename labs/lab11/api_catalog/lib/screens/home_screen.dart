@@ -9,14 +9,38 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Products App")),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProductsApp()),
-            );
-          },
-          child: const Text("Open catalog"),
+        child: Column(
+          mainAxisAlignment: .center,
+          spacing: 10.0,
+          children: [
+            Text(
+              "Meticiulously crafted by human.",
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w300,
+                fontSize: 20.0,
+              ),
+            ),
+            SizedBox(height: 50.0),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProductsApp()),
+                );
+              },
+              child: const Text("Open catalog"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SearchApp()),
+                );
+              },
+              child: const Text("Open search"),
+            ),
+          ],
         ),
       ),
     );

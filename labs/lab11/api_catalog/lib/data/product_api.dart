@@ -25,7 +25,6 @@ class ProductApi {
     final uri = Uri.https(_host, '/products', {
       'limit': '$limit',
       'skip': '$skip',
-      'delay': '3000',
     });
     return ProductPage.fromJson(await _get(uri));
   }

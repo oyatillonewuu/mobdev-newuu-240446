@@ -1,10 +1,4 @@
-import 'package:api_catalog/cubit/products_cubit.dart'
-    show
-        ProductsCubit,
-        ProductsLoaded,
-        ProductsLoading,
-        ProductsError,
-        ProductsState;
+import 'package:api_catalog/cubit/products_cubit.dart';
 import 'package:api_catalog/data/product_api.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:test/test.dart';
